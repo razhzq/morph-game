@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Transform between skater, tank, and jet in this exciting desert combat game!">
+    <meta name="keywords" content="game, HTML5, canvas, javascript, skater, tank, jet">
+    <title>Desert Combat: Skater-Tank-Jet Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #333;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            background: #fff;
+            border: 2px solid #000;
+        }
+        #gameContainer {
+            text-align: center;
+        }
+        #instructions {
+            color: #fff;
+            margin: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="instructions">
+            <h2>How to Play</h2>
+            <p>Arrow Keys: Move | Space: Fire | X: Transform to Jet</p>
+            <p>Start as a skater, transform into a tank, then become a jet!</p>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html> 
