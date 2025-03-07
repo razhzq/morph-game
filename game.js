@@ -43,6 +43,13 @@ function formatTime(milliseconds) {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
+// Analytics tracking function
+function trackEvent(eventName, eventParams = {}) {
+    if (typeof gtag !== 'undefined') {
+        gtag('event', eventName, eventParams);
+    }
+}
+
 // Function to reset game state
 function resetGame() {
     score = 0;
@@ -59,6 +66,8 @@ function resetGame() {
         gameStarted = true;
         gameLoop();
     }
+    // Track game start
+    trackEvent('game_start');
 }
 
 // Function to draw environment
@@ -134,10 +143,19 @@ class Enemy {
     }
 
     checkCollision(missile) {
-        return (missile.x < this.x + this.width &&
+        const hit = (missile.x < this.x + this.width &&
                 missile.x + missile.width > this.x &&
                 missile.y < this.y + this.height &&
                 missile.y + missile.height > this.y);
+        
+        if (hit) {
+            // Track enemy hit
+            trackEvent('enemy_hit', {
+                score: score
+            });
+        }
+        
+        return hit;
     }
 
     checkPlayerCollision(player) {
@@ -277,28 +295,32 @@ class Player {
     }
 
     transformToJet() {
-        if (!this.isJet && !this.isSkater) { // Only transform if in tank form
+        if (!this.isJet && !this.isSkater) {
             this.isJet = true;
             this.isTank = false;
-            // Reset velocities but keep position
             this.velocityY = 0;
             this.speed = 0;
+            // Track transformation
+            trackEvent('transform_to_jet');
         }
     }
 
     fireMissile() {
-        if (!this.isSkater && this.canFire) { // Only tank can fire
-            // Calculate missile starting position based on tank cannon
+        if (!this.isSkater && this.canFire) {
             const missileX = this.direction === 1 ? this.x + 65 : this.x - 25;
             const missileY = this.y - 25;
             
             this.missiles.push(new Missile(missileX, missileY, this.direction));
             
-            // Add firing cooldown
             this.canFire = false;
             setTimeout(() => {
                 this.canFire = true;
             }, this.fireDelay);
+
+            // Track missile fired
+            trackEvent('missile_fired', {
+                player_type: this.isJet ? 'jet' : 'tank'
+            });
         }
     }
 
@@ -427,6 +449,13 @@ class Player {
         ctx.font = '20px Arial';
         ctx.fillText('Press SPACE to play again', canvas.width / 2, canvas.height / 2 + 70);
         ctx.restore();
+
+        // Track game over
+        trackEvent('game_over', {
+            score: score,
+            survival_time: survivalTime,
+            final_form: this.isJet ? 'jet' : (this.isTank ? 'tank' : 'skater')
+        });
 
         // Add event listener for restart
         document.addEventListener('keydown', this.handleRestart);
