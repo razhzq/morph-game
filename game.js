@@ -5,6 +5,21 @@ const ctx = canvas.getContext('2d');
 canvas.width = 800;
 canvas.height = 400;
 
+// Handle window resize
+function resizeCanvas() {
+    const container = document.getElementById('gameContainer');
+    const maxWidth = Math.min(container.clientWidth - 40, 800); // 40px for padding
+    const scale = maxWidth / 800;
+    
+    // Maintain aspect ratio
+    canvas.style.width = `${maxWidth}px`;
+    canvas.style.height = `${400 * scale}px`;
+}
+
+// Initial resize and add listener
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
 // Game state
 let player = null;
 let playerName = 'Player';  // Default name
